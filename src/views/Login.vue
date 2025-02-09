@@ -57,10 +57,14 @@ const rulesLogin = {
   ],
 };
 // 登录函数
-import {useRouter} from 'vue-router'
+import {useRouter} from 'vue-router';
+import { useTokenStore } from "@/stores/token";
+
+const tokenStore = useTokenStore();
 const router = useRouter()
 const login = async () => {
   let result = await userLoginService(loginData.value);
+  tokenStore.setToken(result.data)
   ElMessage.success (result.message ? result.message : '登录成功');
   // 跳转到主页
   router.push('/')
@@ -133,7 +137,7 @@ const clearData = () => {
         size="large"
         autocomplete="off"
         v-else
-        v-model="loginData"
+        :model="loginData"
         :rules="rulesLogin"
       >
         <el-form-item>
@@ -145,7 +149,6 @@ const clearData = () => {
             placeholder="请输入用户名/邮箱"
             v-model="loginData.loginInfo"
             name="loginInfo"
-            autocomplete="new-password"
           />
         </el-form-item>
         <el-form-item prop="password">
